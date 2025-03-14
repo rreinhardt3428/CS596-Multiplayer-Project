@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletMovement : MonoBehaviour
 {
     public float bulletSpeed = 10f;  // Bullet speed
-    public string shooterTag;        // To prevent self-hit
+    public int damage = 1;
 
     void Update()
     {
@@ -15,14 +15,16 @@ public class BulletMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(shooterTag)) return; // Ignore collisions with the shooter
-
-        PlayerHealth player = other.GetComponent<PlayerHealth>(); // Check if it's a player
-        if (player != null)
+        // Assuming you want to check if the bullet hits the opposite player.
+        if (other.CompareTag("Player 2"))  // Check if the bullet hits Player1 or Player2
         {
-            player.TakeDamage(1); // Apply damage
-            Destroy(gameObject);  // Destroy bullet on hit
+            PlayerHealthAndShield player = other.GetComponent<PlayerHealthAndShield>();
+            if (player != null)
+            {
+                player.TakeDamage(damage); // Call TakeDamage() from PlayerHealthAndShield
+            }
+
+            Destroy(gameObject); // Destroy bullet on impact
         }
     }
 }
-

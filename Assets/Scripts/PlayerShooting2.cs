@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerShooting : MonoBehaviour
+public class PlayerShooting2 : MonoBehaviour
 {
     public GameObject bulletPrefab;         // Bullet prefab to instantiate
     public float bulletSpeed = 10f;         // Speed of the bullet
@@ -24,38 +24,37 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        float currentFireRate = fireRate;   // Assigns default fire rate
-
         if (!shootingEnabled) return;       // Disables firing if shooting is disabled
 
         if (Input.GetKey(shootKey))  // Check if assigned shoot key is held down
         {
             if (Time.time >= nextFireTime)
             {
-                FireBullet();
-                nextFireTime = Time.time + (1f / currentFireRate); // Calculate next fire time
+                FireBullets();  // Fire 3 bullets at once
+                nextFireTime = Time.time + (1f / fireRate); // Calculate next fire time
             }
         }
     }
 
-    void FireBullet()
+    void FireBullets()
+    {
+        // Fire bullets at 3 different directions
+        FireBullet(Vector2.left);  // Bullet going straight to the right
+        FireBullet(Vector2.left + Vector2.up * 2f);  // Bullet going right and slightly upwards
+        FireBullet(Vector2.left + Vector2.down * 2f);  // Bullet going right and slightly downwards
+    }
+
+    void FireBullet(Vector2 direction)
     {
         // Instantiate a bullet at the player's position
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
 
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();    // Get the Rigidbody component 
+        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();    // Get the Rigidbody2D component 
 
         if (rb != null)
         {
-            // Set the velocity to move always along the right direction
-            rb.velocity = new Vector3(bulletSpeed, 0f, 0f);
-        }
-
-        // Set the shooterTag for the bullet
-        BulletMovement bulletScript = bullet.GetComponent<BulletMovement>();
-        if (bulletScript != null)
-        {
-            bulletScript.shooterTag = playerTag;
+            // Set the velocity in the specified direction
+            rb.velocity = direction.normalized * bulletSpeed;
         }
 
         // Play shoot sound
