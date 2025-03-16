@@ -12,8 +12,13 @@ public class PlayerHealthAndShield : MonoBehaviour
     public int maxShield = 5;
     public int currentShield;
 
+    public AudioClip damageSound;
+    public AudioSource audioSource;
+
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         currentHealth = maxHealth;
         currentShield = maxShield;
 
@@ -25,6 +30,11 @@ public class PlayerHealthAndShield : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (audioSource != null && damageSound != null)
+        {
+            audioSource.PlayOneShot(damageSound);
+        }
+
         if (currentShield > 0)
         {
             currentShield -= damage;
